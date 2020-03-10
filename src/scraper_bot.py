@@ -7,6 +7,8 @@ import praw
 import pandas as pd
 import wget
 import pathlib
+import os.path
+from os import path
 
 __author__ = "Marshall Briggs"
 __version__ = "0.1.0"
@@ -29,17 +31,14 @@ def main():
 
     posts = []
 
-    """for submission in subreddit.top('all', limit=10):
-        print(submission.title)
-        print(submission.score)
-        print(submission.id)
-        print(submission.url) # this is the picture
-        print(submission.link_flair_text)
-        # print(vars(submission))"""
-
     for submission in subreddit.top('all', limit=3):
         posts.append([submission.title, submission.score, submission.id, submission.subreddit, submission.url, submission.num_comments, submission.selftext, submission.created, submission.link_flair_text])
-        wget.download(submission.url, str(images_path))
+        submission_name, submission_ext = os.path.splitext(submission.url)
+        image_location = str(images_path)+"\\"+submission.title+submission_ext
+        if path.exists(image_location) is not False:
+            print("Image Exists")
+        else:
+            submission_image = wget.download(submission.url, image_location)
     posts = pd.DataFrame(posts,columns=['title', 'score', 'id', 'subreddit', 'url', 'num_comments', 'body', 'created', 'flair'])
     print(posts)
     
