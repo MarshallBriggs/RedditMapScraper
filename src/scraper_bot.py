@@ -19,10 +19,10 @@ def main():
     # Path to script currently
     root_path = pathlib.Path().absolute()
     print(root_path)
+    # Path to images folder
     images_path = root_path/"images"
     print(images_path)
 
-    # Create Reddit Instance
     reddit = praw.Reddit(client_id='YWdkCzRc9WGAGQ', client_secret='70AueOljfrE_524-7XJgWfEYbKE', user_agent='Reddit_Map_Scraper')
 
     subreddit = reddit.subreddit('dndmaps')
