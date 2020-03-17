@@ -33,6 +33,9 @@ def main():
     # subreddit = reddit.subreddit('dndmaps+battlemaps')
 
     posts = []
+    downloaded_posts = 0
+    new_posts = 0
+    download_error_posts = 0
 
     for submission in subreddit.top('all', limit=10):
         submission_name, submission_ext = os.path.splitext(submission.url)
@@ -44,15 +47,18 @@ def main():
         save_path = save_folder + "\\" + submission.title + submission_ext
         if path.exists(save_path) is not False:
             print(submission_name + " already exists")
+            downloaded_posts = downloaded_posts + 1
         else:
             try:
                 submission_image = wget.download(submission.url, save_path)
                 posts.append([submission.title, submission.score, submission.id, submission.subreddit, submission.url, 
                         submission.num_comments, submission.selftext, submission.created, submission.link_flair_text, save_path])
+                new_posts = new_posts + 1
             except OSError as err:
                 print()
                 # print("Error fetching " + submission.title + " from reddit")
                 print("OS error: {0}".format(err))
+                download_error_posts = download_error_posts + 1
             """except:
                 e = sys.exc_info()[0]
                 print()
@@ -61,10 +67,15 @@ def main():
     
     if posts:
         posts = pd.DataFrame(posts,columns=['title', 'score', 'id', 'subreddit', 'url', 'num_comments', 'body', 'created', 'flair', 'save_path'])
+        print()
         print("Posts:")
         print(posts)
     elif not posts:
             print("No new posts")
+    
+    print("Posts from list already downloaded: " + str(downloaded_posts))
+    print("New Posts downloaded in this script: " + str(new_posts))
+    print("Errors downloading Posts in this script: " + str(download_error_posts))
     
 
 if __name__ == "__main__":
